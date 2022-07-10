@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake</title>
+    <style>
+        table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid black;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+<div id="board"></div>
+<script>
+    const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3
+    const WIDTH = 20, HEIGHT = 20
+    function draw(rows, cols, snake) {
+        let table = document.createElement('table')
+        for(var i=0; i < rows; i++) {
+            let row = document.createElement('tr')
+            for(var j=0; j < cols; j++) {
+                let cell = document.createElement('td')
+                let found = snake.find(function(el) { return el.x == i && el.y == j; })
+                if (found) {
+                    cell.appendChild(document.createTextNode('X'))
+                }
+                row.appendChild(cell)
+            }
+            table.appendChild(row)
+        }
+        document.getElementById("board").innerHTML = ''
+        document.getElementById("board").appendChild(table)
+    }
+    function movePoint(point, direction) {
+        let result
+        if (direction == UP)
+            if (point.x == 0)
+                result = { x: HEIGHT - 1, y: point.y }
+            else
+                result = { x: point.x - 1, y: point.y }
+        if (direction == RIGHT)
+            if (point.y == WIDTH - 1)
+                result = { x: point.x, y: 0 }
+            else
+                result = { x: point.x, y: point.y + 1 }
+        if (direction == DOWN)
+            if (point.x == HEIGHT - 1)
+                result = { x: 0, y: point.y }
+            else
+                result = { x: point.x + 1, y: point.y }
+        if (direction == LEFT)
+            if (point.y == 0)
+                result = { x: point.x, y: WIDTH - 1 }
+            else
+                result = { x: point.x, y: point.y - 1 }
+        return result
+    }
+    function move(snake, direction) {
+        for (var i = snake.length - 1; i > 0; i--) {
+            snake[i] = snake[i - 1]
+        }
+        snake[0] = movePoint(snake[0], direction)
+    }
+    let snake = [{x: 2, y: 2}, {x:3, y: 2}, {x:4, y: 2}, {x:4, y: 3}, {x:4, y: 4}, {x:4, y: 5}, {x:4, y: 6}]
+    let direction = UP
+
+    document.onkeydown = function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38')
+            direction = UP
+        else if (e.keyCode == '40')
+            direction = DOWN
+        else if (e.keyCode == '37')
+           direction = LEFT
+        else if (e.keyCode == '39')
+           direction = RIGHT
+    }
+
+    draw(WIDTH, HEIGHT, snake)
+    setInterval(function() {
+        move(snake, direction)
+        draw(WIDTH, HEIGHT, snake)
+    }, 100);
+</script>
+</body>
+</html>
