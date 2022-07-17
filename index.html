@@ -6,10 +6,8 @@
     <style>
         table {
             border: 1px solid black;
-            border-collapse: collapse;
         }
         td {
-            border: 1px solid black;
             width: 20px;
             height: 20px;
             text-align: center;
@@ -65,28 +63,40 @@
         return result
     }
     function move(snake, direction) {
+        let next = movePoint(snake[0], direction)
         for (var i = snake.length - 1; i > 0; i--) {
+            if (snake[i].x == next.x && snake[i].y == next.y) {
+                gameOver()
+            }
             snake[i] = snake[i - 1]
         }
-        snake[0] = movePoint(snake[0], direction)
+        snake[0] = next
     }
-    let snake = [{x: 2, y: 2}, {x:3, y: 2}, {x:4, y: 2}, {x:4, y: 3}, {x:4, y: 4}, {x:4, y: 5}, {x:4, y: 6}]
-    let direction = UP
+
+    function gameOver() {
+        console.error("game over!!")
+        clearInterval(loop)
+    }
+
+    let snake = [{x: 2, y: 5}, {x:2, y: 4}, {x:2, y: 3}, {x:2, y: 2}]
+    let direction = RIGHT
 
     document.onkeydown = function checkKey(e) {
         e = e || window.event;
-        if (e.keyCode == '38')
+        if (e.keyCode == '38' && direction != DOWN)
             direction = UP
-        else if (e.keyCode == '40')
+        else if (e.keyCode == '40' && direction != UP)
             direction = DOWN
-        else if (e.keyCode == '37')
+        else if (e.keyCode == '37' && direction != RIGHT)
            direction = LEFT
-        else if (e.keyCode == '39')
+        else if (e.keyCode == '39' && direction != LEFT)
            direction = RIGHT
+        else if (e.keyCode == '32')
+           snake.push({ x: 0, y: 0 })
     }
 
     draw(WIDTH, HEIGHT, snake)
-    setInterval(function() {
+    let loop = setInterval(function() {
         move(snake, direction)
         draw(WIDTH, HEIGHT, snake)
     }, 100);
